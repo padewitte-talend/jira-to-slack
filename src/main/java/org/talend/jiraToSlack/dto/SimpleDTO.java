@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package org.talend.jiraToSlack.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.JsonNode;

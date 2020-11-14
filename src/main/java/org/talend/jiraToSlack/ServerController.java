@@ -1,21 +1,19 @@
-package com.example.demo;
+package org.talend.jiraToSlack;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.servlet.annotation.HttpMethodConstraint;
-
-import com.example.demo.dto.WebookDTO;
+import org.talend.jiraToSlack.dto.WebookDTO;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @RestController
-public class HelloController {
+public class ServerController {
 
 	@RequestMapping("/")
 	public String index() {
-		return "Greetings from Spring Boot!";
+		return "Simple application converting JIRA webhooks to slack actions";
 	}
 
 	@PostMapping("/jira-webhook")

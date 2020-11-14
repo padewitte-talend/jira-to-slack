@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package org.talend.jiraToSlack.dto;
 
 import java.io.File;
 import java.io.IOException;

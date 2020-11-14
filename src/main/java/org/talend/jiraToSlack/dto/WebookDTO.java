@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package org.talend.jiraToSlack.dto;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
