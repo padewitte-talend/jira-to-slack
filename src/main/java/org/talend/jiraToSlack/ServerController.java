@@ -2,7 +2,7 @@ package org.talend.jiraToSlack;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import org.talend.jiraToSlack.dto.WebookDTO;
+import org.talend.jiraToSlack.dto.WebHookDTO;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,7 @@ public class ServerController {
 	}
 
 	@PostMapping("/jira-webhook")
-	public String jiraWebhook(@RequestBody WebookDTO webookDTO){
+	public String jiraWebhook(@RequestBody WebHookDTO webookDTO){
 		return webookDTO.toString().substring(5, 20);
 	}
 

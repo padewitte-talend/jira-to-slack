@@ -2,7 +2,12 @@ package org.talend.jiraToSlack.slackcli;
 
 public class SlackCliException extends Exception{
 
-    public SlackCliException(String message){
+    /**
+     *
+     */
+    private static final long serialVersionUID = -8442931980107347670L;
+
+    public SlackCliException(String message) {
         super(message);
     }
 

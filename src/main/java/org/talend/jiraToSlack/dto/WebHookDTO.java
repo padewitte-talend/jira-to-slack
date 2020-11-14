@@ -15,7 +15,7 @@ import lombok.Value;
 @AllArgsConstructor
 @ToString
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class WebookDTO {
+public class WebHookDTO {
     Integer id;
     String key;
 

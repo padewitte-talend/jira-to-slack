@@ -9,7 +9,6 @@ import com.slack.api.methods.SlackApiException;
 import com.slack.api.methods.request.chat.ChatPostMessageRequest;
 import com.slack.api.methods.request.conversations.ConversationsArchiveRequest;
 import com.slack.api.methods.request.conversations.ConversationsCreateRequest;
-import com.slack.api.methods.request.conversations.ConversationsInfoRequest;
 import com.slack.api.methods.request.conversations.ConversationsInviteRequest;
 import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.request.conversations.ConversationsRenameRequest;
@@ -22,38 +21,38 @@ import com.slack.api.methods.response.conversations.ConversationsRenameResponse;
 import com.slack.api.model.Conversation;
 import com.slack.api.model.ConversationType;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
 public class SimpleSlackCli {
 
+    Logger logger = LoggerFactory.getLogger(SimpleSlackCli.class);
+
     MethodsClient methods;
 
-    public SimpleSlackCli(@Value("${slack.bot.token}") String botSigninToken) {
+    public SimpleSlackCli(@Value("${slack.bot.token}") String slackBotToken) {
         Slack slack = Slack.getInstance();
-        methods = slack.methods(botSigninToken);
+        methods = slack.methods(slackBotToken);
     }
 
     public void sendSimpleMessage(String message, String channelId) throws SlackCliException {
         try {
-            // Use a channel ID `C1234567` is preferrable
+            // Use a channel ID `C1234567` is preferable
             ChatPostMessageRequest request = ChatPostMessageRequest.builder().channel(channelId).text(message).build();
             // Get a response as a Java object
 
             ChatPostMessageResponse response = methods.chatPostMessage(request);
-            System.out.println(response);
+            logger.debug(response.toString());
         } catch (IOException | SlackApiException e) {
             throw new SlackCliException("Unable to send message to channel", e);
         }
     }
 
-    public void getChannels() {
-        ConversationsInfoRequest request = ConversationsInfoRequest.builder().channel("C01EXT5AK0U").build();
-    }
-
     public Conversation createChannel(String channelName, List<String> users) throws SlackCliException {
-        if (users == null && users.size() < 1) {
+        if (users == null || users.size() < 1) {
             throw new SlackCliException("One user at least should be in the channel");
         }
 
@@ -124,7 +123,6 @@ public class SimpleSlackCli {
         }
     }
 
-    @Deprecated
     /**
      * Cursor are not managed
      * @return

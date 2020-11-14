@@ -1,22 +1,24 @@
 package org.talend.jiraToSlack.dto;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.io.File;
 
-import org.talend.jiraToSlack.dto.DtoBuilder;
-import org.talend.jiraToSlack.dto.WebookDTO;
-
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
 public class WebhookTests {
-    
+    Logger logger = LoggerFactory.getLogger(WebhookTests.class);
 
     @Test
 	void webhookFromFile() {
         
-        WebookDTO webHook = DtoBuilder.createFromFile(new File("/home/pdewitte/perso/jira-to-slack/src/test/java/org/talend/demo/samples/webhook_doc_jira.json"), WebookDTO.class);
-        System.out.println(webHook);
+        WebHookDTO webHook = DtoBuilder.createFromFile(new File("/home/pdewitte/perso/jira-to-slack/src/test/java/org/talend/jiraToSlack/samples/webhook_doc_jira.json"), WebHookDTO.class);
+        assertNotNull(webHook.getUser());
+        logger.info(webHook.toString());
 
     }
 }
