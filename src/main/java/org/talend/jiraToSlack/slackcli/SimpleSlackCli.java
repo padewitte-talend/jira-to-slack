@@ -38,6 +38,12 @@ public class SimpleSlackCli {
         methods = slack.methods(slackBotToken);
     }
 
+    /**
+     * https://api.slack.com/methods/chat.postMessage
+     * @param message
+     * @param channelId
+     * @throws SlackCliException
+     */
     public void sendSimpleMessage(String message, String channelId) throws SlackCliException {
         try {
             // Use a channel ID `C1234567` is preferable
@@ -51,6 +57,13 @@ public class SimpleSlackCli {
         }
     }
 
+    /**
+     * https://api.slack.com/methods/conversations.create
+     * @param channelName
+     * @param users
+     * @return
+     * @throws SlackCliException
+     */
     public Conversation createChannel(String channelName, List<String> users) throws SlackCliException {
         if (users == null || users.size() < 1) {
             throw new SlackCliException("One user at least should be in the channel");
@@ -73,6 +86,13 @@ public class SimpleSlackCli {
         }
     }
 
+    /**
+     * https://api.slack.com/methods/conversations.invite
+     * @param channelId
+     * @param users
+     * @return
+     * @throws SlackCliException
+     */
     public Conversation inviteUsers(String channelId, List<String> users) throws SlackCliException {
         try {
             ConversationsInviteRequest inviteRequest = ConversationsInviteRequest.builder().channel(channelId)
@@ -87,6 +107,14 @@ public class SimpleSlackCli {
         }
     }
 
+    /**
+     * https://api.slack.com/methods/conversations.rename
+     * @param channelId
+     * @param channelNameWillBe
+     * @param users
+     * @return
+     * @throws SlackCliException
+     */
     public Conversation renameChannelAndAdd(String channelId, String channelNameWillBe, List<String> users)
             throws SlackCliException {
 
@@ -109,6 +137,12 @@ public class SimpleSlackCli {
         }
     }
 
+    /**
+     * Archive a conversation
+     * https://api.slack.com/methods/conversations.archive
+     * @param channelId
+     * @throws SlackCliException
+     */
     public void archiveConversation(String channelId) throws SlackCliException {
 
         try {
@@ -125,6 +159,7 @@ public class SimpleSlackCli {
 
     /**
      * Cursor are not managed
+     * https://api.slack.com/methods/conversations.list
      * @return
      * @throws SlackCliException
      */
