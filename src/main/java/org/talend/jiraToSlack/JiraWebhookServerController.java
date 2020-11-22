@@ -16,7 +16,7 @@ public class JiraWebhookServerController {
 
 	@RequestMapping("/")
 	public String index() {
-		return "Simple application converting JIRA webhooks to slack actions";
+		return "Hello I am there. My only endpoint is /jira-webhook!";
 	}
 
 	@PostMapping("/jira-webhook")

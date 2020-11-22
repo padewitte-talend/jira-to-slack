@@ -63,7 +63,7 @@ public class SimpleSlackCliTest {
         
         try {
 
-            Conversation channel = simpleSlackCli.createChannel(generatedString, users);
+            Conversation channel = simpleSlackCli.createChannel(generatedString, "dummy", users);
             logger.debug(channel.getId());
         } catch (SlackCliException e) {
             logger.info("Unable to create channel", e);
@@ -82,7 +82,7 @@ public class SimpleSlackCliTest {
         logger.info("Renaming a random channel");
         try {
 
-            Conversation channel = simpleSlackCli.createChannel(generatedStringWas, users);
+            Conversation channel = simpleSlackCli.createChannel(generatedStringWas, "dummy", users);
             simpleSlackCli.renameChannelAndAdd(channel.getId(), generatedStringTo, null);
             logger.debug(channel.getId());
 

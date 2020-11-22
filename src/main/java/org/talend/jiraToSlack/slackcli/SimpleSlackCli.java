@@ -115,8 +115,12 @@ public class SimpleSlackCli {
     }
 
 
-
-
+    /**
+     * Collecting channel names for a cursor.
+     * @param channels
+     * @param response
+     * @return
+     */
     private String iterateOverChannelCursor(Map<String, String> channels, ConversationsListResponse response){
         if (response.isOk()) {
             logger.debug(response.toString());
@@ -130,6 +134,11 @@ public class SimpleSlackCli {
         }
     }
 
+    /**
+     * Load the channel list.
+     * @return
+     * @throws SlackCliException
+     */
     public Map<String, String> loadChannelList()
             throws SlackCliException {
 

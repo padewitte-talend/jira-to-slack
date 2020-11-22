@@ -13,7 +13,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.talend.jiraToSlack.dto.WebHookDTO;
@@ -28,8 +27,10 @@ public class JiraWebhookService {
 
     @PostConstruct
     public void init() {
-        logger.info("Loading channel ids async");
-        loadChannelIdsAsync();
+        // logger.info("Loading channel ids async");
+        // loadChannelIds();
+        logger.info("Post constructing JiraWebhookService");
+        logger.info(welcomeMessage);
     }
 
     @Autowired
@@ -37,6 +38,9 @@ public class JiraWebhookService {
 
     @Autowired
     private Environment environment;
+
+    @Value("${welcome.message}")
+    private String welcomeMessage;
 
     @Value("${managed.projects}")
     private String[] managedProjects;
@@ -54,7 +58,7 @@ public class JiraWebhookService {
             String issueId = webookDTO.getIssue().getKey();
             String project = issueId.split("-")[0].toLowerCase();
             if (Arrays.stream(managedProjects).anyMatch(managedProject -> project.equalsIgnoreCase(managedProject))) {
-                String channelName = issueId + "-internal".toLowerCase();
+                String channelName = issueId + "".toLowerCase();
                 switch (webookDTO.getWebhookEvent()) {
                     case "jira:issue_created":
 
@@ -209,7 +213,7 @@ public class JiraWebhookService {
         }
     }
 
-    public void loadChannelIdsAsync() {
+    public void loadChannelIds() {
         loadChannelIds(false);
         logger.info("Loading channel ids async done. {} channels found", CHANNELS_IDS.size());
     }
