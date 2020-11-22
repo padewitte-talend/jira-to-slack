@@ -1,7 +1,9 @@
 package org.talend.jiraToSlack.slackcli;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.slack.api.Slack;
 import com.slack.api.methods.MethodsClient;
@@ -12,6 +14,8 @@ import com.slack.api.methods.request.conversations.ConversationsCreateRequest;
 import com.slack.api.methods.request.conversations.ConversationsInviteRequest;
 import com.slack.api.methods.request.conversations.ConversationsListRequest;
 import com.slack.api.methods.request.conversations.ConversationsRenameRequest;
+import com.slack.api.methods.request.conversations.ConversationsSetTopicRequest;
+import com.slack.api.methods.request.conversations.ConversationsSetTopicRequest.ConversationsSetTopicRequestBuilder;
 import com.slack.api.methods.response.chat.ChatPostMessageResponse;
 import com.slack.api.methods.response.conversations.ConversationsArchiveResponse;
 import com.slack.api.methods.response.conversations.ConversationsCreateResponse;
@@ -25,6 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 @Component
 public class SimpleSlackCli {
@@ -53,7 +58,7 @@ public class SimpleSlackCli {
             ChatPostMessageResponse response = methods.chatPostMessage(request);
             logger.debug(response.toString());
         } catch (IOException | SlackApiException e) {
-            throw new SlackCliException("Unable to send message to channel", e);
+            throw new SlackCliException("Unable to send message to channel: "+channelId+". Message was: "+message, e);
         }
     }
 
@@ -64,7 +69,7 @@ public class SimpleSlackCli {
      * @return
      * @throws SlackCliException
      */
-    public Conversation createChannel(String channelName, List<String> users) throws SlackCliException {
+    public Conversation createChannel(String channelName, String issueUrl, List<String> users) throws SlackCliException {
         if (users == null || users.size() < 1) {
             throw new SlackCliException("One user at least should be in the channel");
         }
@@ -78,6 +83,8 @@ public class SimpleSlackCli {
                 throw new SlackCliException("Unable to create channel " + response.getError());
             }
             Conversation channel = response.getChannel();
+            ConversationsSetTopicRequest setTopicRequest = ConversationsSetTopicRequest.builder().channel(channel.getId()).topic(issueUrl).build();
+            methods.conversationsSetTopic(setTopicRequest);
 
             return inviteUsers(channel.getId(), users);
 
@@ -106,6 +113,44 @@ public class SimpleSlackCli {
             throw new SlackCliException("Unable to send message to channel", e);
         }
     }
+
+
+
+
+    private String iterateOverChannelCursor(Map<String, String> channels, ConversationsListResponse response){
+        if (response.isOk()) {
+            logger.debug(response.toString());
+            response.getChannels().stream().forEach(chan -> channels.put(chan.getName().toLowerCase(), chan.getId()));
+            if(!StringUtils.isEmpty(response.getResponseMetadata().getNextCursor())){
+                return response.getResponseMetadata().getNextCursor();
+            }
+            return null;
+        }else{
+            throw new SlackCliException("Unable to iterate over channel listing cursor " + response.getError());
+        }
+    }
+
+    public Map<String, String> loadChannelList()
+            throws SlackCliException {
+
+        try {
+            Map<String, String> channels = new HashMap<>();
+
+            String curCursor = null;
+            do{
+                ConversationsListRequest request = ConversationsListRequest.builder().limit(1000).types(List.of(ConversationType.PRIVATE_CHANNEL)).excludeArchived(false).cursor(curCursor).build();
+                ConversationsListResponse response = methods.conversationsList(request);
+                curCursor = iterateOverChannelCursor(channels, response);
+            } while (curCursor != null);
+
+            logger.debug("iteration over");
+            return channels;
+
+        } catch (IOException | SlackApiException e) {
+            throw new SlackCliException("Unable to send message to channel", e);
+        }
+    }
+
 
     /**
      * https://api.slack.com/methods/conversations.rename
@@ -149,7 +194,7 @@ public class SimpleSlackCli {
             ConversationsArchiveRequest request = ConversationsArchiveRequest.builder().channel(channelId).build();
             ConversationsArchiveResponse response = methods.conversationsArchive(request);
             if (!response.isOk()) {
-                throw new SlackCliException("Unable to close channel " + response.getError());
+                throw new SlackCliException("Unable to close channel "+channelId + " : " + response.getError());
             }
 
         } catch (IOException | SlackApiException e) {

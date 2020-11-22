@@ -2,6 +2,8 @@ package org.talend.jiraToSlack.slackcli;
 
 import static org.junit.jupiter.api.Assertions.fail;
 import java.util.List;
+import java.util.Map;
+
 import com.slack.api.model.Conversation;
 import org.assertj.core.internal.bytebuddy.utility.RandomString;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
@@ -18,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 public class SimpleSlackCliTest {
     Logger logger = LoggerFactory.getLogger(SimpleSlackCliTest.class);
     String channelId = "C01EXT5AK0U";
+    String channelName = "une-bidouille";
     String message = ":wave: Hi from a bot written in Java!";
 
     @Autowired
@@ -32,6 +35,20 @@ public class SimpleSlackCliTest {
             simpleSlackCli.sendSimpleMessage(message, channelId);
         } catch (SlackCliException e) {
             logger.info("Unable to send simple message", e);
+            fail(e.getMessage());
+        }
+
+    }
+
+    @Test
+    @Order(1)
+    void sendOtherDummyMessage() {
+
+        logger.info("sending another message");
+        try {
+            simpleSlackCli.sendSimpleMessage(message, channelName);
+        } catch (SlackCliException e) {
+            logger.info("Unable to send other simple message", e);
             fail(e.getMessage());
         }
 
@@ -76,6 +93,22 @@ public class SimpleSlackCliTest {
     }
 
     @Test
+    @Order(4)
+    void findChannelByName() {
+        
+        logger.info("Listing all channel");
+        try {
+
+            Map<String, String> channelId = simpleSlackCli.loadChannelList();
+            logger.debug("List of channels {}", channelId);
+
+        } catch (SlackCliException e) {
+            logger.info("Unable to find channel", e);
+            fail(e.getMessage());
+        }
+    }
+
+    @Test
     @Order(Integer.MAX_VALUE - 1)
     void listAndArchiveAllPrivateConversation() {
         try {
@@ -95,5 +128,8 @@ public class SimpleSlackCliTest {
             fail(e.getMessage());
         }
     }
+
+
+  
 
 }

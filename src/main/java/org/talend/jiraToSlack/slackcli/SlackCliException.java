@@ -1,6 +1,6 @@
 package org.talend.jiraToSlack.slackcli;
 
-public class SlackCliException extends Exception{
+public class SlackCliException extends RuntimeException{
 
     /**
      *
