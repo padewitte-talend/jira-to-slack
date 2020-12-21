@@ -58,6 +58,7 @@ spec:
                             usernamePassword(credentialsId: 'artifactory-datapwn-credentials', passwordVariable: 'JFROG_DOCKER_PASSWORD', usernameVariable: 'JFROG_DOCKER_LOGIN')
                     ]) {
                         sh '''#! /bin/bash
+                    cd jira-to-slack
                     echo "## Building jira-to-slack ##"
                     echo ${JFROG_DOCKER_PASSWORD} | docker login ${DOCKER_REGISTRY} -u ${JFROG_DOCKER_LOGIN} --password-stdin
                     # mvn build and docker push -Dspring-boot.build-image.publish=true 
